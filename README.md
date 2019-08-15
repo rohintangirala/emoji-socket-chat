@@ -1,2 +1,4 @@
 # emoji-socket-chat
-Socket.io chat with emoticon to emoji conversion
+Chat app with emoticon to emoji conversion
+
+Built with Node.js, Socket.IO, and React

@@ -14,7 +14,7 @@ class App extends Component {
       messages: []
     };
 
-    this.socket = io('localhost:5000');
+    this.socket = io('https://emoji-chat-server-rtangirala.herokuapp.com');
 
     this.socket.on('RECEIVE_MESSAGE', data => {
       this.addMessage(data);
