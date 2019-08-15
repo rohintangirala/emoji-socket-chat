@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+- 10
+dist: trusty
+sudo: false
+branches:
+  only:
+  - master
+script:
+- npm install
+- cd client
+- npm install
+- npm run build
+- cd ..
+deploy:
+  provider: heroku
+  api_key:
+    secure: Fte1y7VMVygRfeqV7H2RywchbdhUAAlmdRVAOhloekkwgGPzFhwW4wREaKSgj1JMZVlf7LlSvqy7/eJ6oqLm5KIajB+LDzxH/Y/rO6O6kppPUggftvxpzxItagLlaKTnYK97Kjt17Tv4jhriLg9di3fq+33jE5oZx0zAavh7o0Xb7mNckBnaQOZbW67XY8aF0jkErFfyab2I1DKhHKsa8gzju9nwDJuXj83a/TgP6595TxDu+f5m149xLOfzTaKFn3x36YJxh0X2imdWDG/Suxs3FKIIIoS4Aw5tyHwiTUeBWvtzD+ytePyF/NrDCK0EJK4ykjnUUyUTB/O4+5upV0OV66e2Qbcfnpr8Y3nC3l75EmW9dLo+kWQg8kj9+g14Ab6xFAP8PAapTXbCg9mKlDxIu7QQCmm2sEsh6Q12MlDkL/KAyAVoQs3Zo0GzuZbf1UaXf3O/W6LorocWnOfrmbNMUDaoUvlp5mHPeeDtA58prM2zwENw50Pf/EmQyL0KpEmjI8mQ1P6XkYnu1p+3/M27wfe/yluiysDBBUOiLP9xb81d0fTSOCQiG+KqO0jkJs12fs3qZaGfsm1QnumRU/MsflY3wpfQzwAN4wTPEE6iNNTlvXmBZKwtwMD+CWNZp9dvF5fgvEnNrmhXD5ujlqwhOrq8pQzG56YSQZd25Jw=
+  app:
+    emoji-chat-server-rtangirala
