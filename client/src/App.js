@@ -107,15 +107,15 @@ class App extends Component {
           <br></br>
           <form onSubmit={this.sendMessage}>
             <label>Username:</label>
-            <input type="text" placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange} className="form-control"/>
+            <input type="text" placeholder="e.g. John Doe" value={this.state.username} onChange={this.handleUsernameChange} className="form-control"/>
             <br/>
             <label>Message:</label>
             <Row>
-              <Col md={10}>
-                <input type="text" placeholder="Message" className="form-control" value={this.state.message} onChange={this.handleMessageChange}/>
+              <Col md={10} className="form-group">
+                <input type="text" placeholder="e.g. Welcome to Emoji Chat :)" className="form-control" value={this.state.message} onChange={this.handleMessageChange}/>
               </Col>
               <Col md={2}>
-              <Dropdown>
+              <Dropdown className="form-group">
                 <Dropdown.Toggle block>
                   Emoticons
                 </Dropdown.Toggle>
@@ -123,7 +123,7 @@ class App extends Component {
                   {
                     _.map(this.emoticons, emoticon_pattern => {
                       return (
-                        <Dropdown.Item onClick={() => this.insertEmoticon(emoticon_pattern) }>{emoticon_pattern}</Dropdown.Item>
+                        <Dropdown.Item onClick={() => this.insertEmoticon(emoticon_pattern) } key={emoticon_pattern}>{emoticon_pattern}</Dropdown.Item>
                       );
                     })
                   }
@@ -145,6 +145,7 @@ class App extends Component {
             }
           </div>
         </Jumbotron>
+        <p id="author">Built by <a href="https://github.com/rohintangirala">@rohintangirala</a></p>
       </Container>
     );
   }
