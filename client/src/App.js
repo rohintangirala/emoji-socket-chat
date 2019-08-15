@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
 import _ from 'lodash';
-import { Container, Row, Col, Card} from 'react-bootstrap';
+import { Container, Jumbotron, Dropdown, Row, Col} from 'react-bootstrap';
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -16,24 +17,62 @@ class App extends Component {
     this.socket = io('localhost:5000');
 
     this.socket.on('RECEIVE_MESSAGE', data => {
-      addMessage(data);
-      emojify(data.author, data.message);
+      this.addMessage(data);
+      this.emojify(data.author, data.message);
     });
 
-    const addMessage = data => {
-      this.setState({ messages: [...this.state.messages, emojify(data.author, data.message)] });
+    let emoticon = require('emoticon');
+
+    this.emoticons = [];
+
+    _.map(emoticon, entry => {
+      _.map(entry.emoticons, emoticon_pattern => {
+        this.emoticons.push(emoticon_pattern);
+        
+        return null;
+      });
+      
+      return null;
+    });
+
+    this.addMessage = data => {
+      if (data.author === '') {
+        data.author = 'Anonymous';
+      }
+      
+      this.setState({ messages: [...this.state.messages, this.emojify(data.author, data.message)] });
     };
 
-    this.sendMessage = ev => {
-      ev.preventDefault();
+    this.handleUsernameChange = event => {
+      this.setState({ username: event.target.value });
+    };
+
+    this.handleMessageChange = event => {
+      this.setState({ message: event.target.value });
+    };
+
+    this.sendMessage = event => {
+      event.preventDefault();
+      
       this.socket.emit('SEND_MESSAGE', {
         author: this.state.username,
         message: this.state.message
-      })
+      });
+
       this.setState({ message: '' });
     };
 
-    const emojify = (author, message) => {
+    this.insertEmoticon = emoticon => {
+      let currentMessage = this.state.message;
+
+      if (currentMessage.length > 0 && currentMessage[currentMessage.length - 1] !== ' ') {
+        this.setState({ message: currentMessage.concat(' ' + emoticon + ' ') });
+      } else {
+        this.setState({ message: currentMessage.concat(emoticon + ' ') });
+      }
+    }
+
+    this.emojify = (author, message) => {
       let emoticon = require('emoticon');
       let emojifiedMessage = message;
 
@@ -54,40 +93,58 @@ class App extends Component {
       let emojifiedData = {
         author: author,
         message: emojifiedMessage
-      }
+      };
+
       return emojifiedData;
     }
   }
 
   render() {
     return (
-      <Container id="chat-card">
-        <Row>
-          <Col>
-            <Card>
-              <Card.Body>
-                <Card.Title>Emoji Chat <span role="img" aria-label="smile">😄</span></Card.Title>
-                <hr/>
-                <div className="messages">
+      <Container id="chat-container">
+        <Jumbotron>
+          <h1>Emoji Chat <span role="img" aria-label="smile">😄</span></h1>
+          <br></br>
+          <form onSubmit={this.sendMessage}>
+            <label>Username:</label>
+            <input type="text" placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange} className="form-control"/>
+            <br/>
+            <label>Message:</label>
+            <Row>
+              <Col md={10}>
+                <input type="text" placeholder="Message" className="form-control" value={this.state.message} onChange={this.handleMessageChange}/>
+              </Col>
+              <Col md={2}>
+              <Dropdown>
+                <Dropdown.Toggle block>
+                  Emoticons
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="scrollable-menu">
                   {
-                    this.state.messages.map(message => {
+                    _.map(this.emoticons, emoticon_pattern => {
                       return (
-                        <div><strong>{message.author}:</strong> {message.message}</div>
+                        <Dropdown.Item onClick={() => this.insertEmoticon(emoticon_pattern) }>{emoticon_pattern}</Dropdown.Item>
                       );
                     })
                   }
-                </div>
-              </Card.Body>
-              <Card.Footer>
-                <input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} className="form-control"/>
-                <br/>
-                <input type="text" placeholder="Message" className="form-control" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})}/>
-                <br/>
-                <button onClick={this.sendMessage} className="btn btn-primary form-control">Send</button>
-              </Card.Footer>
-            </Card>
-          </Col>
-        </Row>
+                </Dropdown.Menu>
+              </Dropdown>
+              </Col>
+            </Row>
+            <br/>
+            <input type="submit" className="btn btn-primary form-control" value="Send"></input>
+          </form>
+          <br></br>
+          <div>
+            {
+              _.map(this.state.messages, message => {
+                return (
+                  <div><strong>{message.author}:</strong> {message.message}</div>
+                );
+              })
+            }
+          </div>
+        </Jumbotron>
       </Container>
     );
   }

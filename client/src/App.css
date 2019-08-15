@@ -1,0 +1,9 @@
+#chat-container {
+  margin-top: 2em;
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 15em;
+  overflow-x: hidden;
+}
